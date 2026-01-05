@@ -42,6 +42,7 @@ class ChatSession:
                 self.thinking_list.append(self.thinking_chunk)
             if self.answer_chunk != '':
                 self.answer_list.append(self.answer_chunk)
+            return True
         else:
             return False #已经没有更多数据了！
 

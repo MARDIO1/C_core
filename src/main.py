@@ -3,19 +3,14 @@
 主程序 - 使用包结构导入LLM API
 """
 # 现在可以直接导入
-from api.LLM import init, step
-
+from chat.session import ChatSession
+chatSession=ChatSession()
 def main():
     """主函数"""
-    print("开始LLM对话...")
-    
-    # 获取响应
-    response = init()
-    
-    # 处理流式输出
-    step(response)
-    
-    print("\n对话结束")
-
+    print("马丢启动...")
+    chatSession.input(input())
+    while(chatSession.get_API_response()):
+        chatSession.fast_show_step()
+    print("\n马丢结束")
 if __name__ == "__main__":
     main()

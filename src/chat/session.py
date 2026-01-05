@@ -17,7 +17,9 @@ class ChatSession:
         #别人的复杂初始化
         #"创建一个名为messages_list的对象属性，它是一个列表，列表中的每个元素都是字典，字典的键是字符串，值可以是任意类型。初始化为空列表。"
         self.start_time: datetime.datetime = datetime.datetime.now()
-        self.response=api.LLM.init()#这个很大其实
+        api.LLM.client_init()
+        #self.response=None #api.LLM.response_init()#这个很大其实
+        self.current_response = None
         self.chunk=None
         self.thinking_chunk =None
         self.answer_chunk =None
@@ -28,28 +30,34 @@ class ChatSession:
         self.answer_list: List[Dict[str, Any]] = []
         self.messages_list: List[Dict[str, Any]] = []
         
-    def input(self,input_string):
-        '''输入函数'''
-        self.messages_list.append(input_string)
+    def input_and_get_response(self,input_string):
+        '''整块消息发送，可惜没有流式发送'''
+        #self.messages_list.append(input_string)
+        #self.response.message["content"]=self.messages_list
+        """发送消息"""
+        # 添加用户消息
+        self.messages_list.append({'role': 'user', 'content': input_string})
+        # 获取响应
+        self.current_response = api.LLM.new_response_init(input_string)
 
     def get_API_response(self):
-        chunk = next(self.response)
-        if chunk.choices: 
-            self.thinking_chunk = chunk.choices[0].delta.reasoning_content
-            self.answer_chunk = chunk.choices[0].delta.content
+        '''获取API响应'''
+        try:
+            chunk = next(self.current_response)
+            if chunk.choices: 
+                self.thinking_chunk = chunk.choices[0].delta.reasoning_content
+                self.answer_chunk = chunk.choices[0].delta.content
 
-            if self.thinking_chunk != '':
-                self.thinking_list.append(self.thinking_chunk)
-            if self.answer_chunk != '':
-                self.answer_list.append(self.answer_chunk)
+                if self.thinking_chunk != '':
+                    self.thinking_list.append({'role': 'thinking', 'content': self.thinking_chunk})
+                if self.answer_chunk != '':
+                    self.answer_list.append({'role': 'answer', 'content': self.answer_chunk})
             return True
-        else:
-            return False #已经没有更多数据了！
-
-        #api.LLM.step(self) 
-
+        except StopIteration:
+            return False  # 没有更多数据
+    
     def step(self):
-        self.input(input())
+        self.input_and_get_response(input())
 
     def fast_show_step(self):
         #如果thinking_chunk非空

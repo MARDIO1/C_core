@@ -81,12 +81,10 @@ class ChatSession:
         #如果thinking_chunk非空
         if self.thinking_chunk != '':
             print(self.thinking_chunk, end='', flush=True)
-            print("\n")
         #如果thinking空了，answer非空
         elif self.answer_chunk != '':
-            print('\n\n ------回答------\n')
             print(self.answer_chunk, end='', flush=True)
-            print("\n")
+            
 
         '''发送到web端的通讯部分开始'''
         '''发送到web端的通讯部分结束'''

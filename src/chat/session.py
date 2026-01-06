@@ -33,7 +33,8 @@ class ChatSession:
         self.thinking_list: List[Dict[str, Any]] = []
         self.answer_list: List[Dict[str, Any]] = []
         self.messages_list: List[Dict[str, Any]] = []
-        
+        self.complete_flag:bool=False
+        self.temp_answer_flag:bool=False
     def new_input_get_LLMresponse(self, input_string: str) -> None:
         '''发送消息并获取响应'''
         # 添加用户消息
@@ -81,8 +82,12 @@ class ChatSession:
         #如果thinking_chunk非空
         if self.thinking_chunk != '':
             print(self.thinking_chunk, end='', flush=True)
+            self.temp_answer_flag=True
         #如果thinking空了，answer非空
         elif self.answer_chunk != '':
+            if self.temp_answer_flag:
+                print("\n-------")
+            self.temp_answer_flag=False
             print(self.answer_chunk, end='', flush=True)
             
 

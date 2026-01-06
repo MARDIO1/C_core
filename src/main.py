@@ -32,7 +32,7 @@ def main():
         parser_man.step_parser()
         
         # 调试：打印解析器状态
-        parser_man.debug_step()
+        #parser_man.debug_step()
     print("\n马丢结束")
 
 if __name__ == "__main__":

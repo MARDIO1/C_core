@@ -39,7 +39,7 @@ class ChatSession:
         # 添加用户消息
         self.messages_list.append({'role': 'user', 'content': input_string})
         # 获取响应
-        self.current_response = api.LLM.new_response_init(input_string)
+        self.current_response = api.LLM.new_response_init(self.messages_list)
 
     def streaming_get_API_response(self) -> bool:
         '''获取API响应'''
@@ -58,8 +58,16 @@ class ChatSession:
                     self.thinking_list.append({'role': 'thinking', 'content': self.thinking_chunk})
                 if self.answer_chunk:
                     self.answer_list.append({'role': 'answer', 'content': self.answer_chunk})
+                    # 收集完整的AI回复
+                    if not hasattr(self, '_current_ai_reply'):
+                        self._current_ai_reply = ""
+                    self._current_ai_reply += self.answer_chunk
                 return True
         except StopIteration:
+            # 响应完成，将完整的AI回复添加到messages_list
+            if hasattr(self, '_current_ai_reply') and self._current_ai_reply:
+                self.messages_list.append({'role': 'assistant', 'content': self._current_ai_reply})
+                del self._current_ai_reply
             return False  # 没有更多数据
         except Exception:
             return False
@@ -73,10 +81,12 @@ class ChatSession:
         #如果thinking_chunk非空
         if self.thinking_chunk != '':
             print(self.thinking_chunk, end='', flush=True)
+            print("\n")
         #如果thinking空了，answer非空
         elif self.answer_chunk != '':
-            #print('\n\n ------最终回答------\n')
+            print('\n\n ------回答------\n')
             print(self.answer_chunk, end='', flush=True)
+            print("\n")
 
         '''发送到web端的通讯部分开始'''
         '''发送到web端的通讯部分结束'''

@@ -8,9 +8,9 @@ chatSession=ChatSession()
 def main():
     """主函数"""
     print("马丢启动...")
-    chatSession.input_and_get_response(input())
-    while(chatSession.get_API_response()):
-        chatSession.fast_show_step()
+    chatSession.new_input_get_LLMresponse(input())
+    while(chatSession.streaming_get_API_response()):
+        chatSession.streaming_show_step()
     print("\n马丢结束")
 if __name__ == "__main__":
     main()

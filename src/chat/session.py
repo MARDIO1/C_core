@@ -34,14 +34,14 @@ class ChatSession:
         self.answer_list: List[Dict[str, Any]] = []
         self.messages_list: List[Dict[str, Any]] = []
         
-    def input_and_get_response(self, input_string: str) -> None:
+    def new_input_get_LLMresponse(self, input_string: str) -> None:
         '''发送消息并获取响应'''
         # 添加用户消息
         self.messages_list.append({'role': 'user', 'content': input_string})
         # 获取响应
         self.current_response = api.LLM.new_response_init(input_string)
 
-    def get_API_response(self) -> bool:
+    def streaming_get_API_response(self) -> bool:
         '''获取API响应'''
         if self.current_response is None:
             return False
@@ -66,10 +66,10 @@ class ChatSession:
         
         return False
     
-    def step(self):
-        self.input_and_get_response(input())
+    def one_step(self):
+        self.new_input_get_LLMresponse(input())
 
-    def fast_show_step(self):
+    def streaming_show_step(self):
         #如果thinking_chunk非空
         if self.thinking_chunk != '':
             print(self.thinking_chunk, end='', flush=True)
@@ -77,3 +77,6 @@ class ChatSession:
         elif self.answer_chunk != '':
             #print('\n\n ------最终回答------\n')
             print(self.answer_chunk, end='', flush=True)
+
+        '''发送到web端的通讯部分开始'''
+        '''发送到web端的通讯部分结束'''

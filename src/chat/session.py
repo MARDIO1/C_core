@@ -65,9 +65,9 @@ class ChatSession:
                 return True
         except StopIteration:
             # 响应完成，将完整的AI回复添加到messages_list
-            if hasattr(self, '_current_ai_reply') and self._current_ai_reply:
+            '''if hasattr(self, '_current_ai_reply') and self._current_ai_reply:
                 self.messages_list.append({'role': 'assistant', 'content': self._current_ai_reply})
-                del self._current_ai_reply
+                del self._current_ai_reply'''#麻烦得很
             return False  # 没有更多数据
         except Exception:
             return False
@@ -90,3 +90,5 @@ class ChatSession:
 
         '''发送到web端的通讯部分开始'''
         '''发送到web端的通讯部分结束'''
+
+chatSession_man=ChatSession()#全局变量，单例

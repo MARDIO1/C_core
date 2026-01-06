@@ -40,10 +40,11 @@ def new_response_init(input: Union[str, List[Dict[str, Any]]]):
         # 转换消息格式为OpenAI要求的类型
         messages: List[ChatCompletionMessageParam] = []
         for msg in input:
-            messages.append({
-                "role": msg['role'],
-                "content": msg['content']
-            })
+            if isinstance(msg, dict) and 'role' in msg and 'content' in msg:
+                messages.append({
+                    "role": msg['role'],
+                    "content": msg['content']
+                })
     
     response = client.chat.completions.create(
         model='deepseek-ai/DeepSeek-V3.2',
@@ -52,3 +53,5 @@ def new_response_init(input: Union[str, List[Dict[str, Any]]]):
         extra_body=extra_body
     )
     return response
+
+

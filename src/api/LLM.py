@@ -9,7 +9,7 @@ env_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'KEY', '.
 load_dotenv(env_path)
 
 MODEL = 'deepseek-chat'#deepseek-ai/DeepSeek-V3.2
-BASE_URL = 'ttps://api.deepseek.com'#https://api-inference.modelscope.cn/v1
+BASE_URL = 'https://api.deepseek.com'#https://api-inference.modelscope.cn/v1
 
 # 单例客户端，使用类型提示
 _client: Optional[OpenAI] = None
@@ -19,7 +19,7 @@ def client_init() -> OpenAI:
     global _client
     if _client is None:
         # 从环境变量取出 API KEY
-        api_key = os.getenv('DEEPSEEK_API_KEY')
+        api_key = os.getenv('DEEPSEEK_API_KEY_2')
         if not api_key:
             raise ValueError(f"DEEPSEEK_API_KEY 环境变量未设置。请检查 .env 文件: {env_path}")
         

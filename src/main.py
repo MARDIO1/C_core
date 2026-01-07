@@ -18,13 +18,16 @@ def main():
     
     # 获取用户输入
     temp_input = input("你: ")
+    
     # 创建初始消息（包含系统提示和用户输入）
     messages = prompt_man.create_agent_promote(temp_input)
     
-    # 外层循环：每次发起一个新的响应
-    while True:
+    while 1:
         # 重置Parser状态（新的响应需要新的解析）
         parser_man.reset()
+        
+        # 调试：显示当前消息列表（仅显示长度）
+        # print(f"[DEBUG] messages_list 长度: {len(chatSession_man.messages_list)}")
         
         # 创建新的LLM响应
         chatSession_man.current_response = api.LLM.new_response_init(messages)
@@ -34,11 +37,6 @@ def main():
             # 获取API响应
             if not chatSession_man.streaming_get_API_response():
                 # LLM响应结束，退出内层循环
-                print(f"[DEBUG] LLM响应结束，检查parser状态:")
-                print(f"[DEBUG]   complete_flag: {parser_man.complete_flag}")
-                print(f"[DEBUG]   final_answer_complete_flag: {parser_man.final_answer_complete_flag}")
-                print(f"[DEBUG]   step_tag: {parser_man.step_tag}")
-                print(f"[DEBUG]   current_text: '{parser_man.current_text[:100]}...'")
                 break
             
             # 显示当前chunk
@@ -50,27 +48,23 @@ def main():
             # 检查是否有action需要处理
             if parser_man.complete_flag:
                 # 执行action
-                if action_man.process_actions():
+                result = action_man.process_actions()
+                if result:
                     # action执行成功，观察结果已添加到chatSession_man.messages_list
                     # AI的响应也已添加到chatSession_man.messages_list（在streaming_get_API_response中）
                     # 更新messages以包含所有历史信息
                     messages = chatSession_man.messages_list.copy()
                     # 退出内层循环，让外层循环重新开始
                     break
+                else:
+                    # action执行失败，继续处理
+                    pass
         
-        # 检查是否是最终答案
-        if parser_man.final_answer_complete_flag:
-            print("\n✓ 收到最终答案，对话结束")
+        # 检查是否应该停止对话（收到final_answer）
+        if parser_man.stop_flag:
+            print("\n[完成] 收到最终答案，对话结束")
             break
         
-        # 如果没有action执行，也没有最终答案，但LLM响应已结束
-        # 这可能是LLM没有生成action或final_answer的情况
-        if not parser_man.complete_flag and not parser_man.final_answer_complete_flag:
-            print("\n⚠️ LLM响应结束，但没有生成action或final_answer")
-            print(f"   当前parser状态: step_tag={parser_man.step_tag}, current_text='{parser_man.current_text[:100]}...'")
-            # 在这种情况下，也退出对话
-            break
-    
     print("\n马丢结束")
 
 if __name__ == "__main__":

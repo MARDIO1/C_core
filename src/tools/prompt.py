@@ -16,6 +16,7 @@ class ToolPromptManager:
     2. 然后行动（<action>工具名(参数)</action>）
     3. 观察结果（<observation>...</observation>）
     4. 重复直到得到最终答案（<final_answer>...</final_answer>）
+    5. 必须使用final_answer一轮发言才会结束。如果用户只需要观察，那么观察后总结就是最终结果
 
     可用工具：
     ${tool_list}
@@ -26,12 +27,14 @@ class ToolPromptManager:
     用户：列出当前目录
     AI：<thought>我需要使用list_directory工具查看当前目录</thought>
     <action>list_directory(".")</action>
-
+    <observation>...</observation>
+    <final_answer>当前目录有......你还需要..吗？</final_answer>
     重要规则：
     1. 一次只调用一个工具
     2. 等待观察结果后再继续
     3. 使用XML标签格式
-    4. 最终答案用<final_answer>标签
+    4. 最终答案用<final_answer>标签。必须使用final_answer一轮发言才会结束
+    5. 回答尽量精简，觉得可以听下就使用<final_answer>结束。
     """
 
     def __init__(self, project_directory: Optional[str] = None):

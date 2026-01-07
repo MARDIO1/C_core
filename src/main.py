@@ -19,18 +19,21 @@ def main():
     # 获取用户输入
     temp_input = input("你: ")
     
-    # 创建初始消息（包含系统提示和用户输入）
-    messages = prompt_man.create_agent_promote(temp_input)
+    # 获取系统提示
+    system_prompt = prompt_man.get_system_prompt()
+    
+    # 初始化消息列表：添加系统提示和用户输入
+    # 注意：这里直接操作 chatSession_man.messages_list，而不是创建新的 messages 变量
+    chatSession_man.messages_list.clear()  # 清空现有消息（如果有）
+    chatSession_man.messages_list.append({"role": "system", "content": system_prompt})
+    chatSession_man.messages_list.append({"role": "user", "content": temp_input})
     
     while 1:
         # 重置Parser状态（新的响应需要新的解析）
         parser_man.reset()
         
-        # 调试：显示当前消息列表（仅显示长度）
-        # print(f"[DEBUG] messages_list 长度: {len(chatSession_man.messages_list)}")
-        
-        # 创建新的LLM响应
-        chatSession_man.current_response = api.LLM.new_response_init(messages)
+        # 创建新的LLM响应，直接使用 chatSession_man.messages_list
+        chatSession_man.current_response = api.LLM.new_response_init(chatSession_man.messages_list)
         
         # 内层循环：流式处理chunk
         while True:
@@ -52,8 +55,7 @@ def main():
                 if result:
                     # action执行成功，观察结果已添加到chatSession_man.messages_list
                     # AI的响应也已添加到chatSession_man.messages_list（在streaming_get_API_response中）
-                    # 更新messages以包含所有历史信息
-                    messages = chatSession_man.messages_list.copy()
+                    # 注意：不再需要更新 messages 变量，因为直接使用 chatSession_man.messages_list
                     # 退出内层循环，让外层循环重新开始
                     break
                 else:

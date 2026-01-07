@@ -66,8 +66,8 @@ class ChatSession:
                 return True
         except StopIteration:
             # 响应完成，将完整的AI回复添加到messages_list
+            self.messages_list.append({'role': 'assistant', 'content': self._current_ai_reply})
             '''if hasattr(self, '_current_ai_reply') and self._current_ai_reply:
-                self.messages_list.append({'role': 'assistant', 'content': self._current_ai_reply})
                 del self._current_ai_reply'''#麻烦得很
             return False  # 没有更多数据
         except Exception:

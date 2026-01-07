@@ -33,7 +33,8 @@ class Parser:
         
         # 将chunk添加到当前文本
         self.current_text += chunk
-        
+        '''测试用'''
+        #self.current_text="123<action>321"
         # 处理当前文本
         while self.current_text:
             if self.step_tag is None:
@@ -95,22 +96,6 @@ class Parser:
                     self.current_text = ""
     def debug_step(self):
         '''流式响应Debug，功能是在切换标签的时候输出一个 思考/观察/回答/行动就可以了'''
-        # 检查各种完成标志，只在完成瞬间输出一次
-        if self.thought_complete_flag:
-            print("💭 思考")
-            self.thought_complete_flag = False
-        
-        if self.observation_complete_flag:
-            print("🔍 观察")
-            self.observation_complete_flag = False
-        
-        if self.final_answer_complete_flag:
-            print("✅ 回答")
-            self.final_answer_complete_flag = False
-        
-        if self.complete_flag:
-            print("🔧 行动")
-            self.complete_flag = False
         
     def reset(self):
         """重置解析器状态，用于新的对话"""

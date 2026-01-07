@@ -47,7 +47,7 @@ def new_response_init(input: Union[str, List[Dict[str, Any]]]):
                 })
     
     response = client.chat.completions.create(
-        model='deepseek-ai/DeepSeek-R1-Distill-Qwen-32B', #
+        model='deepseek-ai/DeepSeek-V3.2', #
         messages=messages,
         stream=True,
         extra_body=extra_body

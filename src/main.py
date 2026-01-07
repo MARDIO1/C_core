@@ -14,15 +14,14 @@ def main():
     
     # 获取提示词管理器实例
     prompt_man = get_prompt_manager()
+    
     # 重置Parser状态
     parser_man.reset()
     # 获取用户输入
     temp_input = input("你: ")
-    # 创建包含工具提示的消息列表
+    # 复杂promote
     messages = prompt_man.create_agent_promote(temp_input)
-    # 发送消息并获取响应（直接使用消息列表）
     chatSession_man.current_response = api.LLM.new_response_init(messages)
-    
     # 流式处理响应
     while chatSession_man.streaming_get_API_response():
         # 显示当前chunk

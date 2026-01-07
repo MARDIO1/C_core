@@ -34,6 +34,11 @@ def main():
             # 获取API响应
             if not chatSession_man.streaming_get_API_response():
                 # LLM响应结束，退出内层循环
+                print(f"[DEBUG] LLM响应结束，检查parser状态:")
+                print(f"[DEBUG]   complete_flag: {parser_man.complete_flag}")
+                print(f"[DEBUG]   final_answer_complete_flag: {parser_man.final_answer_complete_flag}")
+                print(f"[DEBUG]   step_tag: {parser_man.step_tag}")
+                print(f"[DEBUG]   current_text: '{parser_man.current_text[:100]}...'")
                 break
             
             # 显示当前chunk
@@ -58,7 +63,13 @@ def main():
             print("\n✓ 收到最终答案，对话结束")
             break
         
-
+        # 如果没有action执行，也没有最终答案，但LLM响应已结束
+        # 这可能是LLM没有生成action或final_answer的情况
+        if not parser_man.complete_flag and not parser_man.final_answer_complete_flag:
+            print("\n⚠️ LLM响应结束，但没有生成action或final_answer")
+            print(f"   当前parser状态: step_tag={parser_man.step_tag}, current_text='{parser_man.current_text[:100]}...'")
+            # 在这种情况下，也退出对话
+            break
     
     print("\n马丢结束")
 

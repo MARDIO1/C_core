@@ -33,8 +33,12 @@ class Parser:
         
         # 将chunk添加到当前文本
         self.current_text += chunk
-        '''测试用'''
-        #self.current_text="123<action>321"
+        
+        # 调试输出（注释掉以避免过多输出）
+        # print(f"[DEBUG PARSER] chunk: '{chunk[:50]}...'")
+        # print(f"[DEBUG PARSER] current_text: '{self.current_text[:100]}...'")
+        # print(f"[DEBUG PARSER] step_tag: {self.step_tag}")
+        
         # 处理当前文本
         while self.current_text:
             if self.step_tag is None:
@@ -76,20 +80,26 @@ class Parser:
                     if self.step_tag == "action":
                         self.now_action = self.tag_content
                         self.complete_flag = True
+                        # print(f"[DEBUG PARSER] 找到action: '{self.tag_content[:50]}...'")
                     elif self.step_tag == "thought":
                         self.step_thought = self.tag_content
                         self.thought_complete_flag = True
+                        # print(f"[DEBUG PARSER] 找到thought: '{self.tag_content[:50]}...'")
                     elif self.step_tag == "final_answer":
                         self.step_final_answer = self.tag_content
                         self.final_answer_complete_flag = True
+                        # print(f"[DEBUG PARSER] 找到final_answer: '{self.tag_content[:50]}...'")
+                        # print(f"[DEBUG PARSER] 设置final_answer_complete_flag = True")
                     elif self.step_tag == "observation":
                         self.step_observation = self.tag_content
                         self.observation_complete_flag = True
+                        # print(f"[DEBUG PARSER] 找到observation: '{self.tag_content[:50]}...'")
                     
                     # 退出标签
                     self.step_tag = None
                     self.tag_content = ""
                     self.current_text = self.current_text[end_pos + len(end_tag):]
+                    # print(f"[DEBUG PARSER] 退出标签，更新current_text: '{self.current_text[:50]}...'")
                 else:
                     # 没有找到结束标签，累积内容
                     self.tag_content += self.current_text

@@ -1,7 +1,15 @@
-
 from typing import Optional, List, Dict, Any, Union
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
+import os
+from dotenv import load_dotenv
+
+# 加载指定路径的 .env 文件
+env_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'KEY', '.env')
+load_dotenv(env_path)
+
+MODEL = 'deepseek-chat'#deepseek-ai/DeepSeek-V3.2
+BASE_URL = 'ttps://api.deepseek.com'#https://api-inference.modelscope.cn/v1
 
 # 单例客户端，使用类型提示
 _client: Optional[OpenAI] = None
@@ -10,9 +18,14 @@ def client_init() -> OpenAI:
     '''获取或创建客户端（单例）'''
     global _client
     if _client is None:
+        # 从环境变量取出 API KEY
+        api_key = os.getenv('DEEPSEEK_API_KEY')
+        if not api_key:
+            raise ValueError(f"DEEPSEEK_API_KEY 环境变量未设置。请检查 .env 文件: {env_path}")
+        
         _client = OpenAI(
-            base_url='https://api-inference.modelscope.cn/v1',
-            api_key='ms-1c9cc707-01e0-46ef-8f53-d202a207d74f',
+            base_url=BASE_URL,
+            api_key=api_key,
         )
     return _client
 
@@ -47,11 +60,9 @@ def new_response_init(input: Union[str, List[Dict[str, Any]]]):
                 })
     
     response = client.chat.completions.create(
-        model='deepseek-ai/DeepSeek-V3.2', #
+        model=MODEL,
         messages=messages,
         stream=True,
         extra_body=extra_body
     )
     return response
-
-

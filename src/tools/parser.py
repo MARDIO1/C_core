@@ -94,6 +94,7 @@ class Parser:
                     # 没有找到结束标签，累积内容
                     self.tag_content += self.current_text
                     self.current_text = ""
+                    
     def debug_step(self):
         '''流式响应Debug，功能是在切换标签的时候输出一个 思考/观察/回答/行动就可以了'''
         
